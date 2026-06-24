@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>for...</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --blue:        #5b9bd5;
+    --blue-light:  #a8cef0;
+    --blue-soft:   #ddeeff;
+    --blue-dark:   #2f6fa8;
+    --blue-mid:    #6aaee0;
+    --text-dark:   #1a3a5a;
+    --text-mid:    #3a6a9c;
+    --text-light:  #7aaac8;
+    --white:       #ffffff;
+  }
+
+  html, body {
+    height: 100%;
+    width: 100%;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--white);
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(circle at 10% 15%, #ddeeff 0%, transparent 45%),
+      radial-gradient(circle at 90% 80%, #c8e6fa 0%, transparent 40%),
+      radial-gradient(circle at 55% 50%, #f0f8ff 0%, transparent 55%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* SCENE */
+  .scene {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: clamp(1rem, 4vw, 2.5rem) clamp(1rem, 5vw, 2rem);
+    min-height: 100vh;
+    min-height: 100dvh;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .scene.active {
+    display: flex;
+    animation: sceneIn 0.45s cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+
+  @keyframes sceneIn {
+    from { opacity: 0; transform: translateY(18px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* CAPOO */
+  .capoo {
+    width: clamp(140px, 38vw, 190px);
+    height: clamp(140px, 38vw, 190px);
+    object-fit: contain;
+    margin-bottom: clamp(1rem, 3vw, 1.6rem);
+    animation: capBounce 2.2s ease-in-out infinite;
+    filter: drop-shadow(0 8px 20px rgba(91,155,213,0.3));
+    flex-shrink: 0;
+  }
+
+  @keyframes capBounce {
+    0%, 100% { transform: translateY(0) rotate(-1deg); }
+    50%       { transform: translateY(-13px) rotate(1deg); }
+  }
+
+  /* CARD */
+  .card {
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: clamp(20px, 5vw, 28px);
+    padding: clamp(1.2rem, 4vw, 2rem) clamp(1rem, 4vw, 1.8rem);
+    width: 100%;
+    box-shadow:
+      0 8px 40px rgba(91,155,213,0.13),
+      0 2px 8px rgba(91,155,213,0.08),
+      0 0 0 1.5px rgba(168,206,240,0.4);
+    border: 1px solid rgba(255,255,255,0.95);
+  }
+
+  .badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--blue-soft) 0%, #c8e6fa 100%);
+    color: var(--blue-dark);
+    font-size: clamp(0.65rem, 2.5vw, 0.74rem);
+    font-weight: 800;
+    padding: 0.28rem 0.9rem;
+    border-radius: 999px;
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border: 1px solid rgba(91,155,213,0.2);
+  }
+
+  h1 {
+    font-size: clamp(1.1rem, 4.5vw, 1.45rem);
+    font-weight: 800;
+    color: var(--text-dark);
+    line-height: 1.45;
+    margin-bottom: 0.5rem;
+  }
+
+  p.sub {
+    font-size: clamp(0.88rem, 3.5vw, 1rem);
+    color: var(--text-mid);
+    margin-bottom: 1.2rem;
+    line-height: 1.5;
+  }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);
+    color: white;
+    border: none;
+    padding: clamp(0.7rem, 3vw, 0.85rem) clamp(1.6rem, 6vw, 2.4rem);
+    border-radius: 999px;
+    font-size: clamp(0.9rem, 3.5vw, 1rem);
+    font-weight: 700;
+    cursor: pointer;
+    margin: 0.3rem;
+    box-shadow: 0 4px 18px rgba(47,111,168,0.35);
+    transition: transform 0.15s, box-shadow 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn:hover  { transform: translateY(-2px) scale(1.03); box-shadow: 0 6px 22px rgba(47,111,168,0.48); }
+  .btn:active { transform: scale(0.96); }
+
+  .btn-outline {
+    display: inline-block;
+    background: transparent;
+    color: var(--blue);
+    border: 2px solid var(--blue-light);
+    padding: clamp(0.65rem, 3vw, 0.8rem) clamp(1.4rem, 5vw, 2.2rem);
+    border-radius: 999px;
+    font-size: clamp(0.9rem, 3.5vw, 1rem);
+    font-weight: 700;
+    cursor: pointer;
+    margin: 0.3rem;
+    transition: transform 0.15s, background 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn-outline:hover { background: var(--blue-soft); transform: scale(1.03); }
+
+  /* PIN */
+  .pin-dots {
+    display: flex;
+    gap: clamp(10px, 3vw, 14px);
+    margin-bottom: 1.4rem;
+    justify-content: center;
+  }
+
+  .dot {
+    width: clamp(13px, 4vw, 16px);
+    height: clamp(13px, 4vw, 16px);
+    border-radius: 50%;
+    border: 2.5px solid var(--blue-light);
+    background: transparent;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    flex-shrink: 0;
+  }
+
+  .dot.filled {
+    background: var(--blue);
+    border-color: var(--blue);
+    transform: scale(1.15);
+    box-shadow: 0 0 0 4px rgba(91,155,213,0.18);
+  }
+
+  .pin-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(7px, 2vw, 10px);
+    width: 100%;
+    margin-bottom: clamp(7px, 2vw, 10px);
+  }
+
+  .pin-btn {
+    background: white;
+    border: 1.5px solid var(--blue-light);
+    border-radius: clamp(12px, 3vw, 18px);
+    padding: clamp(0.75rem, 3vw, 1rem);
+    font-size: clamp(1.1rem, 4.5vw, 1.3rem);
+    font-weight: 800;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: all 0.12s;
+    box-shadow: 0 2px 8px rgba(91,155,213,0.08);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .pin-btn:hover  { background: var(--blue-soft); border-color: var(--blue); }
+  .pin-btn:active { transform: scale(0.93); background: var(--blue-light); }
+
+  .pin-bottom-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(7px, 2vw, 10px);
+    width: 100%;
+  }
+
+  .error-msg {
+    color: var(--blue-dark);
+    font-size: clamp(0.8rem, 3vw, 0.88rem);
+    font-weight: 700;
+    min-height: 1.3rem;
+    margin-top: 0.5rem;
+  }
+
+  /* LETTER */
+  .letter-box {
+    background: white;
+    border-radius: clamp(14px, 4vw, 20px);
+    padding: clamp(1rem, 4vw, 1.5rem) clamp(0.9rem, 3.5vw, 1.4rem);
+    text-align: left;
+    color: var(--text-dark);
+    font-size: clamp(0.85rem, 3.2vw, 0.93rem);
+    line-height: 1.85;
+    border: 1.5px solid var(--blue-soft);
+    max-height: 50vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--blue-light) transparent;
+    width: 100%;
+    box-shadow: inset 0 1px 4px rgba(91,155,213,0.07);
+  }
+
+  .letter-box::-webkit-scrollbar { width: 3px; }
+  .letter-box::-webkit-scrollbar-thumb { background: var(--blue-light); border-radius: 4px; }
+  .letter-box p { margin-bottom: 0.85rem; }
+  .letter-box p:last-child { margin-bottom: 0; }
+
+  .letter-sig {
+    font-style: italic;
+    color: var(--text-light);
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  /* MUSIC BTN */
+  #music-btn {
+    position: fixed;
+    top: clamp(0.8rem, 3vw, 1.2rem);
+    right: clamp(0.8rem, 3vw, 1.2rem);
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid var(--blue-light);
+    background: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    box-shadow: 0 3px 12px rgba(91,155,213,0.18);
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    color: var(--blue);
+  }
+
+  #music-btn:hover { background: var(--blue-soft); }
+  #music-btn.on    { background: var(--blue); color: white; border-color: var(--blue); }
+
+  /* CONFETTI */
+  .conf {
+    position: fixed;
+    pointer-events: none;
+    z-index: 999;
+    animation: confFall linear forwards;
+  }
+
+  @keyframes confFall {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+
+  .shake { animation: shakeAnim 0.45s ease; }
+  @keyframes shakeAnim {
+    0%,100% { transform: translateX(0); }
+    20%,60% { transform: translateX(-8px); }
+    40%,80% { transform: translateX(8px); }
+  }
+
+  /* DIVIDER */
+  .divider {
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--blue-light), var(--blue));
+    border-radius: 999px;
+    margin: 0.5rem auto 0.9rem;
+  }
+</style>
+</head>
+<body>
+
+<button id="music-btn" title="Music">&#9835;</button>
+
+<!-- SCENE 1: PIN -->
+<div class="scene active" id="scene1">
+  <img class="capoo" id="capoo1" alt="capoo">
+  <div class="card">
+    <div class="badge">secret access</div>
+    <div class="divider"></div>
+    <h1>Heyy, masukkin passwordnya <br> dulu yaaa!, I bet u knowww</h1>
+    <p class="sub">clue : tanggal ulang tahunmu</p>
+    <div class="pin-dots">
+      <div class="dot" id="d0"></div>
+      <div class="dot" id="d1"></div>
+      <div class="dot" id="d2"></div>
+      <div class="dot" id="d3"></div>
+      <div class="dot" id="d4"></div>
+      <div class="dot" id="d5"></div>
+    </div>
+    <div class="pin-grid">
+      <button class="pin-btn" onclick="pressPin('1')">1</button>
+      <button class="pin-btn" onclick="pressPin('2')">2</button>
+      <button class="pin-btn" onclick="pressPin('3')">3</button>
+      <button class="pin-btn" onclick="pressPin('4')">4</button>
+      <button class="pin-btn" onclick="pressPin('5')">5</button>
+      <button class="pin-btn" onclick="pressPin('6')">6</button>
+      <button class="pin-btn" onclick="pressPin('7')">7</button>
+      <button class="pin-btn" onclick="pressPin('8')">8</button>
+      <button class="pin-btn" onclick="pressPin('9')">9</button>
+    </div>
+    <div class="pin-bottom-row">
+      <button class="pin-btn" onclick="pressPin('0')">0</button>
+      <button class="pin-btn" onclick="deletePin()">&#9003;</button>
+    </div>
+    <div class="error-msg" id="error-msg"></div>
+  </div>
+</div>
+
+<!-- SCENE 2: HI PRETTY -->
+<div class="scene" id="scene2">
+  <img class="capoo" id="capoo2" alt="capoo">
+  <div class="card">
+    <div class="badge">welcome</div>
+    <div class="divider"></div>
+    <h1 style="font-size:clamp(1.5rem,6vw,2rem);">hi, pretty</h1>
+    <p class="sub">kamu berhasil! now let's go~</p>
+    <button class="btn" onclick="goTo('scene3')">tap disini</button>
+  </div>
+</div>
+
+<!-- SCENE 3: READY? -->
+<div class="scene" id="scene3">
+  <img class="capoo" id="capoo3" alt="capoo">
+  <div class="card">
+    <div class="badge">are you ready?</div>
+    <div class="divider"></div>
+    <h1>are you ready to open thisss?</h1>
+    <p class="sub">something special is waiting~</p>
+    <div>
+      <button class="btn" onclick="goTo('scene4')">yess!!</button>
+      <button class="btn-outline" onclick="goTo('scene3b')">noo..</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCENE 3B: NOO -->
+<div class="scene" id="scene3b">
+  <img class="capoo" id="capoo3b" alt="capoo">
+  <div class="card">
+    <div class="badge">excuse me??</div>
+    <div class="divider"></div>
+    <h1>OH GITU SEKARANG  <br>KAMU SAMA AKU??</h1>
+    <p class="sub">mana boleh nolak!!</p>
+    <button class="btn" onclick="goTo('scene3')">baik baik</button>
+  </div>
+</div>
+
+<!-- SCENE 4: BIRTHDAY -->
+<div class="scene" id="scene4">
+  <img class="capoo" id="capoo4" alt="capoo">
+  <div class="card">
+    <div class="badge">special day!</div>
+    <div class="divider"></div>
+    <h1>Today, this pretty girl turns <span style="color:var(--blue);font-size:clamp(1.6rem,6vw,2rem);font-weight:900;">20</span>!</h1>
+    <p class="sub">happy birthday, my love</p>
+    <button class="btn" onclick="goTo('scene5')">open it</button>
+  </div>
+</div>
+
+<!-- SCENE 5: MAIN -->
+<div class="scene" id="scene5">
+  <img class="capoo" id="capoo5" alt="capoo">
+  <div class="card">
+    <div class="badge">for you</div>
+    <div class="divider"></div>
+    <h1>Happy birthday to my most beautiful, loving, and caring girlfriend</h1>
+    <p class="sub">I love youu so so muchh!!!</p>
+    <button class="btn" onclick="goTo('scene6')">i have something for you</button>
+  </div>
+</div>
+
+<!-- SCENE 6: INTRO LETTER -->
+<div class="scene" id="scene6">
+  <img class="capoo" id="capoo6" alt="capoo">
+  <div class="card">
+    <div class="badge">almost there</div>
+    <div class="divider"></div>
+    <h1>okayy last one, i made something for your birthday,<br>
+      <span style="color:var(--text-mid);font-size:clamp(0.95rem,3.5vw,1.05rem);font-weight:600;">read it slowly okayyy</span>
+    </h1>
+    <button class="btn" style="margin-top:0.8rem;" onclick="goTo('scene7'); launchConfetti();">&lt;3</button>
+  </div>
+</div>
+
+<!-- SCENE 7: LETTER -->
+<div class="scene" id="scene7">
+  <img class="capoo" id="capoo7" alt="capoo" style="width:clamp(100px,26vw,130px);height:clamp(100px,26vw,130px);margin-bottom:0.7rem;">
+  <h1 style="font-size:clamp(0.95rem,3.5vw,1.1rem);margin-bottom:0.6rem;color:var(--blue-dark);">For ....</h1>
+  <div class="divider" style="margin-bottom:0.8rem;"></div>
+  <div class="letter-box">
+    <p>Heyy ...,</p>
+    <p>Selamat ulang tahun yang ke-20! Hari ini adalah hari yang spesial banget buat aku, karena hari ini kamu lahir ke dunia dan membuat hidupku jauh lebih berwarna.</p>
+    <p>Kamu adalah orang yang paling aku sayangi. Makasih sudah selalu ada, selalu sabar, dan selalu bikin aku senyum tanpa kamu sadari.</p>
+    <p>Di usia 20 ini, semoga semua impian kamu terwujud, semoga kamu selalu sehat, bahagia, dan terus jadi versi terbaik dari dirimu sendiri.</p>
+    <p>Aku bangga banget bisa ada di sisi kamu. Dan aku harap bisa terus ada, selamanya.</p>
+    <p>I love youu so much, ....<br>Happy birthday, my pretty girl.</p>
+    <p class="letter-sig">— with all my love</p>
+  </div>
+</div>
+
+<script>
+/* =============================================
+   CONFIG — sesuaikan di sini
+   ============================================= */
+const PASSWORD  = "123456";
+const MUSIC_URL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
+
+const CAPOO_IMGS = {
+  capoo1:  "capoo-angry.gif",
+  capoo2:  "capoo-hi.gif",
+  capoo3:  "capoo-excited.gif",
+  capoo3b: "capoo-angry.gif",
+  capoo4:  "capoo-love.gif",
+  capoo5:  "capoo-love.gif",
+  capoo6:  "capoo-flower.gif",
+  capoo7:  "capoo-flower.gif"
+};
+
+/* SET CAPOO IMAGES VIA JS */
+Object.entries(CAPOO_IMGS).forEach(([id, src]) => {
+  const el = document.getElementById(id);
+  if (el) el.src = src;
+});
+
+/* AUDIO VIA JS */
+const audio = new Audio(MUSIC_URL);
+audio.loop = true;
+let playing = false;
+
+document.getElementById('music-btn').addEventListener('click', toggleMusic);
+
+function toggleMusic() {
+  const btn = document.getElementById('music-btn');
+  if (playing) {
+    audio.pause();
+    btn.innerHTML = '&#9835;';
+    btn.classList.remove('on');
+  } else {
+    audio.play().catch(() => {});
+    btn.innerHTML = '&#9836;';
+    btn.classList.add('on');
+  }
+  playing = !playing;
+}
+
+/* PIN LOGIC */
+let pinInput = "";
+
+function pressPin(num) {
+  if (pinInput.length >= 6) return;
+  pinInput += num;
+  updateDots();
+  if (pinInput.length === 6) setTimeout(checkPassword, 120);
+}
+
+function deletePin() {
+  pinInput = pinInput.slice(0, -1);
+  updateDots();
+  document.getElementById('error-msg').textContent = "";
+}
+
+function updateDots() {
+  for (let i = 0; i < 6; i++) {
+    document.getElementById('d' + i).classList.toggle('filled', i < pinInput.length);
+  }
+}
+
+function checkPassword() {
+  if (pinInput === PASSWORD) {
+    goTo('scene2');
+  } else {
+    const el = document.getElementById('scene1');
+    el.classList.add('shake');
+    setTimeout(() => el.classList.remove('shake'), 500);
+    document.getElementById('error-msg').textContent = "Salah!! Coba lagi yaaa";
+    pinInput = "";
+    updateDots();
+  }
+}
+
+/* NAVIGATION */
+function goTo(id) {
+  document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* CONFETTI */
+function launchConfetti() {
+  const colors = ['#5b9bd5','#a8cef0','#ddeeff','#2f6fa8','#6aaee0','#ffffff','#c8e6fa'];
+  for (let i = 0; i < 90; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'conf';
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.top = '-10px';
+      el.style.background = colors[Math.floor(Math.random() * colors.length)];
+      el.style.animationDuration = (1.4 + Math.random() * 2.2) + 's';
+      el.style.animationDelay = Math.random() * 0.6 + 's';
+      el.style.borderRadius = Math.random() > 0.5 ? '50%' : '3px';
+      el.style.width  = (7 + Math.random() * 6) + 'px';
+      el.style.height = (7 + Math.random() * 6) + 'px';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 4500);
+    }, i * 22);
+  }
+}
+</script>
+</body>
+</html>
